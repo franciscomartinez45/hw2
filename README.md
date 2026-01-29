@@ -1,4 +1,4 @@
-# Homework 1 Instructions
+# Homework 2 Instructions
 
 Follow the instructions in `hw2.pdf`
 
@@ -9,4 +9,3 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
-
