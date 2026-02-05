@@ -25,8 +25,14 @@ def kfold_indices(n: int, K: int) -> List[np.ndarray]:
     folds : list of length K
         folds[i] is a 1D np.ndarray of validation indices for fold i.
     """
-    # TODO: Implement
-    raise NotImplementedError
+    # TODO: Implementraise NotImplementedError
+    # raise NotImplementedError
+
+    arr = np.arange(n)
+
+    folds = np.array_split(arr, K)
+
+    return folds
 
 
 def train_val_split(
@@ -37,7 +43,19 @@ def train_val_split(
     Return (Xti, yti, Xvi, yvi).
     """
     # TODO: Implement
-    raise NotImplementedError
+    # raise NotImplementedError
+
+    val_i = folds[i]
+
+    train_i = np.concatenate(folds[:i]+folds[i+1:])
+
+    X_train = X[train_i]
+    y_train = y[train_i]
+
+    X_val = X[val_i]
+    y_val = y[val_i]
+    
+    return X_train, y_train, X_val, y_val
 
 
 def cv_mse_poly(Xtr: np.ndarray, ytr: np.ndarray, K: int, degree: int = 3) -> float:
@@ -50,8 +68,23 @@ def cv_mse_poly(Xtr: np.ndarray, ytr: np.ndarray, K: int, degree: int = 3) -> fl
     Return the average validation MSE across folds.
     """
     # TODO: Implement
-    raise NotImplementedError
+    # raise NotImplementedError
+    n = len(Xtr)
+    folds = kfold_indices(n,K)
 
+    mse_list = []
+
+    for i in range(K):
+        X_train, y_train, X_val, y_val = train_val_split(Xtr, ytr, folds, i)
+        pipeline = make_poly_pipeline(degree)
+        pipeline.fit(X_train, y_train)
+
+        y_pred = predict(pipeline, X_val)
+
+        fold_mse = mse(y_pred, y_val)
+        mse_list.append(fold_mse)
+
+    return float(np.mean(mse_list))
 
 def cv_curve(
     Xtr: np.ndarray, ytr: np.ndarray, degrees: Sequence[int], K: int = 5
@@ -59,8 +92,17 @@ def cv_curve(
     """
     Return cv_mses array aligned with degrees.
     """
-    # TODO: Implement
-    raise NotImplementedError
+    # # TODO: Implement
+    # raise NotImplementedError
+
+    cv_mses = []
+
+    for degree in degrees:
+        cv_mse = cv_mse_poly(Xtr, ytr, K, degree)
+        cv_mses.append(cv_mse)
+
+    return np.array(cv_mses)
+
 
 
 def recommend_degree_cv(degrees: Sequence[int], cv_mses: np.ndarray) -> int:
@@ -69,4 +111,8 @@ def recommend_degree_cv(degrees: Sequence[int], cv_mses: np.ndarray) -> int:
     Break ties by returning the smaller degree.
     """
     # TODO: Implement
-    raise NotImplementedError
+    # raise NotImplementedError
+
+    best_degree = int(np.argmin(cv_mses))
+
+    return degrees[best_degree]
