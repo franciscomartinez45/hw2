@@ -124,7 +124,7 @@ def make_poly_pipeline(degree: int = 3) -> Pipeline:
     # raise NotImplementedError
     steps = [('polynomial', PolynomialFeatures(degree=degree, include_bias=False)),
              ('scalar', StandardScaler()),
-             ('linear'), LinearRegression(fit_intercept=True)
+             ('linear', LinearRegression(fit_intercept=True))
              ]
     return Pipeline(steps)
 
